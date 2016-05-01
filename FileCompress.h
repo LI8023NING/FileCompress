@@ -4,7 +4,7 @@
 #include<assert.h>
 
 
-//ÎÄ¼şÑ¹ËõÀà
+//æ–‡ä»¶å‹ç¼©ç±»
 class FileCompress
 {
 public:
@@ -20,6 +20,7 @@ public:
 	{}
 
 public:
+	//ç”Ÿæˆå“ˆå¤«æ›¼ç¼–ç 
 	void _GenerateHuffmanCode(HuffmanTreeNode<FileInfo>* root)
 	{
 		if (root == nullptr)
@@ -30,7 +31,7 @@ public:
 		_GenerateHuffmanCode(root->_left);
 		_GenerateHuffmanCode(root->_right);
 
-		//µ±Ç°½ÚµãÎªÒ¶×Ó½ÚµãÎª¿Õ  ²ÅÉú³É¹ş·òÂü±àÂë
+		//å½“å‰èŠ‚ç‚¹ä¸ºå¶å­èŠ‚ç‚¹ä¸ºç©º  æ‰ç”Ÿæˆå“ˆå¤«æ›¼ç¼–ç 
 		if (root->_left == nullptr && root->_right == nullptr)
 		{
 			HuffmanTreeNode<FileInfo>* cur = root;
@@ -55,21 +56,21 @@ public:
 	}
 
 public:
-	//ÎÄ¼şÑ¹Ëõ
+	//æ–‡ä»¶å‹ç¼©
 	bool Compress(const char* filename)
 	{
-		//1.´ò¿ªÒ»¸öÎÄ¼ş£¬Í³¼ÆÎÄ¼ş×Ö·û³öÏÖµÄ´ÎÊı
-		//2.Éú³É¶ÔÓ¦µÄ¹ş¸¥Âü±àÂë
-		//3.Ñ¹ËõÎÄ¼ş
-		//4.Ğ´ÅäÖÃÎÄ¼ş£¬·½±ã½âÑ¹Ëõ
+		//1.æ‰“å¼€ä¸€ä¸ªæ–‡ä»¶ï¼Œç»Ÿè®¡æ–‡ä»¶å­—ç¬¦å‡ºç°çš„æ¬¡æ•°
+		//2.ç”Ÿæˆå¯¹åº”çš„å“ˆå¼—æ›¼ç¼–ç 
+		//3.å‹ç¼©æ–‡ä»¶
+		//4.å†™é…ç½®æ–‡ä»¶ï¼Œæ–¹ä¾¿è§£å‹ç¼©
 
 		assert(filename);
 		FILE *fOut = fopen(filename, "rb");
 		assert(fOut);
 
-		//Í³¼ÆÎÄ¼ş×Ö·û³öÏÖµÄ´ÎÊı
+		//ç»Ÿè®¡æ–‡ä»¶å­—ç¬¦å‡ºç°çš„æ¬¡æ•°
 		unsigned char ch = fgetc(fOut);
-		while (!feof(fOut))  //ÎÄ¼ş½áÊø
+		while (!feof(fOut))  //æ–‡ä»¶ç»“æŸ
 		{
 			_infos[ch]._count++;
 			ch = fgetc(fOut);
@@ -79,27 +80,27 @@ public:
 		FileInfo invalid;
 		ht.CreateTree(_infos, 256, invalid);
 
-		//¹ş·òÂü±àÂë
+		//å“ˆå¤«æ›¼ç¼–ç 
 		_GenerateHuffmanCode(ht.GetRoot());
 
 		string compressFile = filename;
 		compressFile += ".huf";
 
-		//Ñ¹ËõºóµÄÎÄ¼şÃû ºó×ºÎª¡¶ÊäÈëÎÄ¼şÃû+.huf¡·
-		FILE *finCompress = fopen(compressFile.c_str(), "wb"); //»ñÈ¡stringÖĞµÄC×Ö·û´®
+		//å‹ç¼©åçš„æ–‡ä»¶å åç¼€ä¸ºã€Šè¾“å…¥æ–‡ä»¶å+.hufã€‹
+		FILE *finCompress = fopen(compressFile.c_str(), "wb"); //è·å–stringä¸­çš„Cå­—ç¬¦ä¸²
 		assert(finCompress);
 
-		fseek(fOut, 0, SEEK_SET);//½«ÎÄ¼şÖ¸ÕëÒÆµ½¿ªÍ·
+		fseek(fOut, 0, SEEK_SET);//å°†æ–‡ä»¶æŒ‡é’ˆç§»åˆ°å¼€å¤´
 		char cha = fgetc(fOut);
 		unsigned char inch = 0;
-		int index = 0;  //Ò»¸ö×Ö½ÚµÄ°ËÎ»
+		int index = 0;  //ä¸€ä¸ªå­—èŠ‚çš„å…«ä½
 		while (!feof(fOut))
 		{
 			string& code = _infos[(unsigned char)cha]._code;
 
 			for (size_t i = 0; i < code.size(); ++i)
 			{
-				inch <<= 1;     //µÍÎ»Ïò¸ßÎ»½ø
+				inch <<= 1;     //ä½ä½å‘é«˜ä½è¿›
 				if (code[i] == '1')
 				{
 					inch |= 1;
@@ -107,8 +108,8 @@ public:
 
 				if (++index == 8)
 				{
-					fputc(inch, finCompress); //¹»8Î»£¬×°½øÎÄ¼ş
-					index = 0;   //ÖØĞÂÒ»ÂÖ¿ªÊ¼
+					fputc(inch, finCompress); //å¤Ÿ8ä½ï¼Œè£…è¿›æ–‡ä»¶
+					index = 0;   //é‡æ–°ä¸€è½®å¼€å§‹
 					inch = 0;
 				}
 			}
@@ -117,16 +118,16 @@ public:
 
 		fclose(fOut);
 
-		//Èç¹ûindex = 0 ËµÃ÷ ÉÏ±ß8Î»¸ÕºÃ´æÂú ²»µÈ ÏÂÒ»¸ö×Ô¼ºÓÖ³öÀ´ÁË
-		if (index != 0)   //´¦Àí×îºóÒ»¸ö×Ö·û²»¹»µÄÎÊÌâ
+		//å¦‚æœindex = 0 è¯´æ˜ ä¸Šè¾¹8ä½åˆšå¥½å­˜æ»¡ ä¸ç­‰ ä¸‹ä¸€ä¸ªè‡ªå·±åˆå‡ºæ¥äº†
+		if (index != 0)   //å¤„ç†æœ€åä¸€ä¸ªå­—ç¬¦ä¸å¤Ÿçš„é—®é¢˜
 		{
-			inch <<= (8 - index); //×î¸ßÎ»±ØĞë×°ÉÏ ºó±ßµÄÀË·Ñµô
+			inch <<= (8 - index); //æœ€é«˜ä½å¿…é¡»è£…ä¸Š åè¾¹çš„æµªè´¹æ‰
 			fputc(inch, finCompress);
 		}
 
 		fclose(finCompress);
 
-		//ÈÕÖ¾ÎÄ¼ş ½âÑ¹ËõÓÃ
+		//æ—¥å¿—æ–‡ä»¶ è§£å‹ç¼©ç”¨
 		string logFile = filename;
 		logFile += ".log";
 		
@@ -135,7 +136,7 @@ public:
 
 		string chInfo;
 
-		char str[128] = {0}; //Ã»¿Õ¼ä ²»¿ÉÒÔ
+		char str[128] = {0}; //æ²¡ç©ºé—´ ä¸å¯ä»¥
 
 		for (size_t i = 1; i < 256; ++i)
 		{
@@ -178,12 +179,12 @@ public:
 		}
 	}
 
-	//ÖØ¹¹ÎÄ¼ş
+	//é‡æ„æ–‡ä»¶
 	void _RestoreFiles(HuffmanTreeNode<FileInfo> *root, const char* Fileneme,long long size)
 	{
 		assert(root);
 
-		//Ô­Ñ¹ËõÎÄ¼ş
+		//åŸå‹ç¼©æ–‡ä»¶
 		string name = Fileneme;
 		name += ".huf";
 		
@@ -234,11 +235,11 @@ public:
 	}
 
 	
-	void UnCompress(const char* Fileneme)//½âÑ¹Ëõ
+	void UnCompress(const char* Fileneme)//è§£å‹ç¼©
 	{
-		//1.´ò¿ªÈÕÖ¾ÎÄ¼ş
-		//2.¸ù¾İĞÅÏ¢»¹Ô­¹ş·òÂüÊ÷
-		//3.»¹Ô­ĞÅÏ¢£»
+		//1.æ‰“å¼€æ—¥å¿—æ–‡ä»¶
+		//2.æ ¹æ®ä¿¡æ¯è¿˜åŸå“ˆå¤«æ›¼æ ‘
+		//3.è¿˜åŸä¿¡æ¯ï¼›
 		string UnCompressneme = Fileneme;
 		UnCompressneme += ".log";
 		FILE *fOutLogFile = fopen(UnCompressneme.c_str(), "rb");
@@ -256,7 +257,7 @@ public:
 		FileInfo invalid;
 		f.CreateTree(_infos, 256, invalid);
 
-		//¸ù¾İÖØ½¨µÄ¹ş·òÂüÊ÷ »¹Ô­ÎÄ¼ş£»
+		//æ ¹æ®é‡å»ºçš„å“ˆå¤«æ›¼æ ‘ è¿˜åŸæ–‡ä»¶ï¼›
 		long long size = f.GetRoot()->_weight._count;
 		_RestoreFiles(f.GetRoot(), Fileneme,size);
 	}
